@@ -1,0 +1,29 @@
+name: CI Workflow
+
+# تحديد الأحداث التي تشغل هذا الـ Workflow (مثلاً عند عمل Push أو Pull Request)
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. سحب كود المشروع من المستودع
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # 2. إعداد بيئة العمل (مثلاً Node.js كمثال)
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    # 3. تثبيت الاعتمادات وتشغيل الاختبارات أو البناء
+    - name: Install dependencies and build
+      run: |
+        npm install
+        npm run build
