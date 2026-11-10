@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "watermalon",
+  "version": "${version}",
+  "name": "Watermalon UI Starter",
+  "description": "A small Fabric client scaffold for the Watermalon UI and HUD port.",
+  "authors": ["Watermalon contributors"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.sixseven.watermalon.WatermalonClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

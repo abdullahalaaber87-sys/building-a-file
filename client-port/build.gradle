@@ -1,0 +1,73 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+    id 'maven-publish'
+}
+
+version = project.version
+group = project.group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "watermalon" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+def generatedModVersion = project.version.toString()
+def generatedArchiveName = project.archives_base_name.toString()
+
+processResources {
+    inputs.property "version", generatedModVersion
+
+    filesMatching('fabric.mod.json') {
+        expand version: generatedModVersion
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+    options.encoding = 'UTF-8'
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.register('verifyDesignLogic', JavaExec) {
+    group = 'verification'
+    description = 'Runs the standalone layout, playback, and motion checks.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'dev.sixseven.ui.design.DesignLogicTest'
+}
+
+tasks.named('test', Test) {
+    failOnNoDiscoveredTests = false
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('verifyDesignLogic')
+}
+
+jar {
+    from('LICENSE') {
+        rename { "${it}_${generatedArchiveName}" }
+    }
+}
